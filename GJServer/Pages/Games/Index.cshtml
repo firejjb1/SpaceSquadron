@@ -1,0 +1,91 @@
+﻿@page
+@model GJServer.Model.IndexModel
+
+@{
+    ViewData["Title"] = "Games";
+}
+
+<h1>Index</h1>
+
+
+<!--
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+    <table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Games[0].Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Games[0].ReleaseDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Games[0].Genre)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Games[0].Price)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Games) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ReleaseDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Genre)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Price)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.ID">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.ID">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.ID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+-->
+
+
+<canvas id="glCanvas" width="640" height="480"></canvas>
+
+<script>
+    //
+    // start here
+    //
+    let items = [];
+    @foreach (var item in Model.Games)
+    {
+        @:items.push("@item.Title");
+    }
+    console.log(items);
+    function main() {
+        const canvas = document.querySelector("#glCanvas");
+        // Initialize the GL context
+        const gl = canvas.getContext("webgl");
+
+        // Only continue if WebGL is available and working
+        if (gl === null) {
+            alert("Unable to initialize WebGL. Your browser or machine may not support it.");
+            return;
+        }
+
+        // Set clear color to black, fully opaque
+        gl.clearColor(0.0, 0.0, 0.0, 1.0);
+        // Clear the color buffer with specified clear color
+        gl.clear(gl.COLOR_BUFFER_BIT);
+    }
+
+    window.onload = main;
+</script>
