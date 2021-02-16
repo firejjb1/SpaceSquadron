@@ -1,7 +1,14 @@
 C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\GJServer.exe
 C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\wwwroot\css\site.css
 C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\wwwroot\favicon.ico
+C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\wwwroot\js\babylon\babylonjs\babylon.js
+C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\wwwroot\js\babylon\babylonjs\babylon.max.js
+C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\wwwroot\js\babylon\babylonjs\babylon.max.js.map
+C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\wwwroot\js\babylon\babylonjs\babylon.max.min.js
+C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\wwwroot\js\babylon\babylonjs\babylon.min.js
+C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\wwwroot\js\babylon\babylonjs\babylon.module.d.ts
 C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\wwwroot\js\chat.js
+C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\wwwroot\js\game.js
 C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\wwwroot\js\signalr\dist\browser\signalr.js
 C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\wwwroot\js\signalr\dist\browser\signalr.min.js
 C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\wwwroot\js\site.js
@@ -42,7 +49,6 @@ C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\a
 C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\appsettings.json
 C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\libman.json
 C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\GJServer.dll
-C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\GJServer.deps.json
 C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\GJServer.runtimeconfig.json
 C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\GJServer.pdb
 C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\Humanizer.dll
@@ -62,7 +68,6 @@ C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\M
 C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\Microsoft.DotNet.PlatformAbstractions.dll
 C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\Microsoft.EntityFrameworkCore.dll
 C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\Microsoft.EntityFrameworkCore.Abstractions.dll
-C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\Microsoft.EntityFrameworkCore.Design.dll
 C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\Microsoft.EntityFrameworkCore.Relational.dll
 C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\Microsoft.EntityFrameworkCore.Sqlite.dll
 C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\Microsoft.EntityFrameworkCore.SqlServer.dll
@@ -178,3 +183,4 @@ C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\r
 C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
 C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\GJServer.Views.dll
 C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\GJServer.Views.pdb
+C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\GJServer.deps.json
