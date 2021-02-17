@@ -1,7 +1,7 @@
 ﻿"use strict";
 var currentColor = new BABYLON.Color3(0.5, 0.5, 1);
 var bulletActive = false;
-var Radius = 1000;
+var Radius = 200;
 
 // Find child mesh inside of ship
 var findMesh = (ship, childName) => {
@@ -15,7 +15,28 @@ var findMesh = (ship, childName) => {
     })[0];
 }
 
+function createComet(scene, index) {
+    var generatePoint = () => {
+        return (Math.random() > 0.5 ? 1 : -1) * (300 + Math.random()*50);
+    }
+
+    // Create a built-in "sphere" shape; its constructor takes 6 params: name, segment, diameter, scene, updatable, sideOrientation
+    const rock = BABYLON.Mesh.CreateSphere("rock" + index, 20, 32, scene, true, BABYLON.Mesh.FRONTSIDE);
+    const rockMat = new BABYLON.StandardMaterial("rockMat", scene);
+    rockMat.diffuseTexture = new BABYLON.Texture("img/floor.png", scene);
+    rockMat.emissiveColor = new BABYLON.Color3(Math.random(), Math.random(), Math.random());
+    rock.material = rockMat;
+    const position = new BABYLON.Vector3(generatePoint(), generatePoint(), generatePoint());
+    rock.position = position;
+    rock.targetPos = new BABYLON.Vector3(0 - position.x, 0 - position.y, 0 - position.z);
+    rock.checkCollisions = true;
+    return rock;
+}
+
 function createShip(scene, camera) {
+
+    let currentColor = new BABYLON.Color3(Math.random(), Math.random(), Math.random());
+
     /*** Primary part of ship ***/
     const nose = BABYLON.MeshBuilder.CreateCylinder("nose", { height: 3, diameterTop: 0, diameterBottom: 1, tessellation: 4 });
 
@@ -30,7 +51,6 @@ function createShip(scene, camera) {
     jetMat.emissiveColor = currentColor;
     jetMat.alpha = 0.5;
     jet.material = jetMat;
-    var gl = new BABYLON.GlowLayer("glow", scene);
 
     // Create a particle system
     const particleSystem = new BABYLON.ParticleSystem("particles", 2000, scene);
@@ -81,7 +101,7 @@ function createShip(scene, camera) {
     particleSystem.start();
 
     const boostAnim = new BABYLON.Animation("boostAnim", "position.z", 30, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
-    const boostKeys = [];
+   /**  const boostKeys = [];
     boostKeys.push({
         frame: 0,
         value: camera.position.z
@@ -100,7 +120,7 @@ function createShip(scene, camera) {
     });
     boostAnim.setKeys(boostKeys);
     camera.animations.push(boostAnim);
-
+    */
     /*** Blasters and bullets ***/
     const blasterMat = new BABYLON.StandardMaterial("blastMat", scene);
     blasterMat.diffuseColor = currentColor;
@@ -115,17 +135,17 @@ function createShip(scene, camera) {
     blasterRight.parent = nose;
     blasterRight.material = blasterMat;
 
-    const bulletLeft = BABYLON.MeshBuilder.CreateCylinder("bulletLeft", { diameter: 0.1, height: 0.5 });
-    const bulletRight = BABYLON.MeshBuilder.CreateCylinder("bulletRight", { diameter: 0.1, height: 0.5 });
+    const bulletLeft = BABYLON.MeshBuilder.CreateCylinder("bulletLeft", { diameter: 0.3, height: 1.5 });
+    const bulletRight = BABYLON.MeshBuilder.CreateCylinder("bulletRight", { diameter: 0.3, height: 1.5 });
     bulletLeft.parent = blasterLeft;
     bulletRight.parent = bulletLeft;
     bulletRight.position.x = 1.5;
-
+    bulletLeft.checkCollisions = true;
     const bulletMat = new BABYLON.StandardMaterial("bulletMaterial", scene);
     bulletMat.emissiveColor = currentColor;
     bulletLeft.material = bulletMat;
     bulletRight.material = bulletMat;
-    const bulletAnim = new BABYLON.Animation("bulletAnim", "position.y", 30, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+    const bulletAnim = new BABYLON.Animation("bulletAnim", "position.y", 300, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
     const bulletKeys = [];
 
     bulletKeys.push({
@@ -133,8 +153,8 @@ function createShip(scene, camera) {
         value: 0
     });
     bulletKeys.push({
-        frame: 30,
-        value: 30
+        frame: 600,
+        value: 600
     });
 
     bulletAnim.setKeys(bulletKeys);
@@ -186,22 +206,29 @@ function createShip(scene, camera) {
     shield.animations.push(shieldAnim);
 
     nose.setPivotPoint(new BABYLON.Vector3(0, -2.25, 0));
-    nose.rotate(BABYLON.Axis.Y, Math.PI / 2);
-    nose.rotate(BABYLON.Axis.X, Math.PI);
+    //nose.rotate(BABYLON.Axis.X, Math.PI / 2);
+    //nose.rotate(BABYLON.Axis.Z, Math.PI);
+    let Radius = 150 + Math.random() * 100;
     nose.position = new BABYLON.Vector3(0, 0, -Radius);
     // lock camera
-    camera.lockedTarget = nose;
+    if (!camera.lockedTarget)
+        camera.lockedTarget = nose;
+
+    
+    nose.Radius = Radius;
+    nose.CurrentColor = currentColor;
     return nose;
 }
 
 // Activate blaster animation
-var fireBlasters = (scene, ship) => {
+var fireBlasters = (scene, ship, camera) => {
     if (!bulletActive) {
         bulletActive = true;
         const bulletLeft = findMesh(ship, "bulletLeft");
-
+        ship.lookAt(camera.getFrontPosition(10));
+        ship.rotate(BABYLON.Axis.X, -Math.PI / 2.2);
         setTimeout(async () => {
-            const anim = scene.beginAnimation(bulletLeft, 0, 100, false);
+            const anim = scene.beginAnimation(bulletLeft, 0, 500, false);
 
             await anim.waitAsync();
             bulletLeft.position.y = 0;
@@ -216,7 +243,7 @@ var turnLeft = (ship) => {
   //  if (ship.position.x > -5) {
     //ship.position.x -= 0.4;
     //ship.position.z += 0.4;
-        ship.rotate(BABYLON.Axis.Z, 0.1, BABYLON.Space.LOCAL);
+        ship.rotate(BABYLON.Axis.Z, -0.1, BABYLON.Space.LOCAL);
   //  }
 }
 
@@ -224,7 +251,7 @@ var turnRight = (ship) => {
   //  if (ship.position.x < 5) {
     //ship.position.x += 0.4;
     // ship.position.z += 0.4;
-    ship.rotate(BABYLON.Axis.Z, -0.1, BABYLON.Space.LOCAL);
+    ship.rotate(BABYLON.Axis.Z, 0.1, BABYLON.Space.LOCAL);
   //  }
 }
 
@@ -246,6 +273,27 @@ var goBackward = (ship) => {
     ship.position.z -= 0.4;
 }
 
+// Create Skybox object
+var createSkybox = (scene) => {
+    const skybox = BABYLON.MeshBuilder.CreateBox("skyBox", { size: 1000.0 }, scene);
+    const skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
+    skyboxMaterial.backFaceCulling = false;
+    const files = [
+        "img/Space/space_left.jpg",
+        "img/Space/space_up.jpg",
+        "img/Space/space_front.jpg",
+        "img/Space/space_right.jpg",
+        "img/Space/space_down.jpg",
+        "img/Space/space_back.jpg",
+    ];
+    skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture.CreateFromImages(files, scene);
+    skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+    skyboxMaterial.disableLighting = true;
+    skybox.material = skyboxMaterial;
+
+    return skybox;
+}
+
 function main() {
     const canvas = document.querySelector("#glCanvas");
     // Initialize the GL context
@@ -255,30 +303,42 @@ function main() {
 
         // Create a basic BJS Scene object
         var scene = new BABYLON.Scene(engine);
+        var gl = new BABYLON.GlowLayer("glow", scene);
 
         // device manager
         var deviceSourceManager = new BABYLON.DeviceSourceManager(scene.getEngine());
         deviceSourceManager.onDeviceConnectedObservable.add((device) => {
             console.log(device.deviceType + " connected");
         });
-
+        var diameter = 200;
+        // Create a built-in "sphere" shape; its constructor takes 6 params: name, segment, diameter, scene, updatable, sideOrientation
+        var sphere = BABYLON.Mesh.CreateSphere('sphere1', 160, diameter, scene, false, BABYLON.Mesh.FRONTSIDE);
 
         //const camera = new BABYLON.FreeCamera("FollowCam", new BABYLON.Vector3(0, 0, -15), scene);
-        var camera = new BABYLON.ArcRotateCamera("Camera", 0, 0, 50, new BABYLON.Vector3(0, 0, 0), scene);
-        camera.attachControl(canvas, true);
-
+        var camera = new BABYLON.ArcRotateCamera("Camera", 0, 0, 50, ship, scene);
+        var ships = [];
         var ship = createShip(scene, camera);
+        ship.position.z = Math.random() * 20 - 10;
+        for (let i = 0; i < 10; i++) {
+            var cloneShip = createShip(scene, camera);
+            ships.push(cloneShip);
+        }
+
+        const skybox = createSkybox(scene);
+
+        camera.attachControl(canvas, true);
         // ship.position = BABYLON.Vector3(0, 5, -5);
         // Create a basic light, aiming 0, 1, 0 - meaning, to the sky
         var light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0, 1, 0), scene);
-        // Create a built-in "sphere" shape; its constructor takes 6 params: name, segment, diameter, scene, updatable, sideOrientation
-        var sphere = BABYLON.Mesh.CreateSphere('sphere1', 160, 200, scene, false, BABYLON.Mesh.FRONTSIDE);
-        // Move the sphere upward 1/2 of its height
-        sphere.position.y = 1;
+
         const sphereMat = new BABYLON.StandardMaterial("sphereMat", scene);
-        sphereMat.diffuseTexture = new BABYLON.Texture("https://assets.babylonjs.com/environments/roof.jpg", scene);;
+        sphereMat.diffuseTexture = new BABYLON.Texture("img/earthmap.jpg", scene); 
         sphere.material = sphereMat;
+        sphere.rotate(BABYLON.Axis.X, Math.PI);
         var i = 0;
+        var lastSpawn = 0;
+        var spawnInterval = 3;
+        var comets = [];
         scene.registerBeforeRender(() => {
             if (deviceSourceManager.getDeviceSource(BABYLON.DeviceType.Keyboard)) {
                 if (deviceSourceManager.getDeviceSource(BABYLON.DeviceType.Keyboard).getInput(37) == 1) {
@@ -296,17 +356,58 @@ function main() {
                 }
 
                 if (deviceSourceManager.getDeviceSource(BABYLON.DeviceType.Keyboard).getInput(32) == 1) {
-                    fireBlasters(scene, ship);
+                    fireBlasters(scene, ship, camera);
                 }
             }
-            ship.position.x = Radius * Math.cos(i);
-            ship.position.y = Radius * Math.sin(i);
-            //camera.position.y = ship.position.y + 5;
-            //camera.position.z = ship.position.z - 15;
-            //camera.position.x = ship.position.x;
+            if (i - lastSpawn > spawnInterval) {
+                console.log("comet spawn: " + i);
+                var comet = createComet(scene, i);
+                comets.push(comet);
+                lastSpawn = i;
+            }
+
+            // orbit
+            var position = new BABYLON.Vector3(ship.Radius * Math.cos(0.5*i + 100), ship.Radius * Math.sin(0.5*i + 100), ship.position.z);
+
+            if (!bulletActive) {
+                ship.lookAt(position);
+                ship.rotate(BABYLON.Axis.X, Math.PI / 2);
+            }
+
+            ship.position = position;
+          
+            for (let j = 0; j < ships.length; j++) {
+                var shipC = ships[j];
+                var positionC = new BABYLON.Vector3(shipC.Radius * Math.cos(i + j*20), shipC.Radius * Math.sin(i + j*20), j*20);
+
+                shipC.lookAt(positionC);
+                shipC.rotate(BABYLON.Axis.X, Math.PI / 2);
+
+                shipC.position = positionC;
+            }
+            const bulletLeft = findMesh(ship, "bulletLeft");
+            for (let j = 0; j < comets.length; j++) {
+                var cometC = comets[j];
+                if (cometC.intersectsMesh(bulletLeft)) {
+                    console.log("bullet hit");
+                    cometC.hitBullet = true;
+                }
+                if (cometC.position.length() < diameter / 2) {
+                    console.log("hit earth");
+                    cometC.hitEarth = true;
+                }
+                if (cometC.hitEarth || cometC.hitBullet) {
+                    cometC.material.emissiveColor = new BABYLON.Color3(1, 0, 0);
+                    continue;
+                } 
+                var positionC = new BABYLON.Vector3(cometC.position.x - 0.0001 * i * cometC.position.x, cometC.position.y - 0.0001 * i * cometC.position.y, cometC.position.z - 0.0001 * i * cometC.position.z);
+                cometC.rotate(BABYLON.Axis.X, 0.1);
+                cometC.position = positionC;
+            }
+           
+            // ship.lookAt(camera.getFrontPosition(10));
+            // ship.lookAt(sphere.position);
             i += 0.005;
-            // camera.CameraDirection = sphere.position;
-           // camera.setTarget(sphere.position);
         });
         
         // Create a built-in "ground" shape; its constructor takes 6 params : name, width, height, subdivision, scene, updatable
