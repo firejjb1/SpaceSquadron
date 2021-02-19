@@ -1,6 +1,15 @@
 C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\GJServer.exe
 C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\wwwroot\css\site.css
 C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\wwwroot\favicon.ico
+C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\wwwroot\img\earthmap.jpg
+C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\wwwroot\img\floor.png
+C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\wwwroot\img\roof.jpg
+C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\wwwroot\img\Space\space_back.jpg
+C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\wwwroot\img\Space\space_down.jpg
+C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\wwwroot\img\Space\space_front.jpg
+C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\wwwroot\img\Space\space_left.jpg
+C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\wwwroot\img\Space\space_right.jpg
+C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\wwwroot\img\Space\space_up.jpg
 C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\wwwroot\js\babylon\babylonjs\babylon.js
 C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\wwwroot\js\babylon\babylonjs\babylon.max.js
 C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\wwwroot\js\babylon\babylonjs\babylon.max.js.map

@@ -3,6 +3,7 @@ var currentColor = new BABYLON.Color3(0.5, 0.5, 1);
 var bulletActive = false;
 var Radius = 200;
 
+
 // Find child mesh inside of ship
 var findMesh = (ship, childName) => {
     return ship.getChildMeshes(false, (child) => {
@@ -135,8 +136,8 @@ function createShip(scene, camera) {
     blasterRight.parent = nose;
     blasterRight.material = blasterMat;
 
-    const bulletLeft = BABYLON.MeshBuilder.CreateCylinder("bulletLeft", { diameter: 0.3, height: 1.5 });
-    const bulletRight = BABYLON.MeshBuilder.CreateCylinder("bulletRight", { diameter: 0.3, height: 1.5 });
+    const bulletLeft = BABYLON.MeshBuilder.CreateCylinder("bulletLeft", { diameter: 0.6, height: 1.5 });
+    const bulletRight = BABYLON.MeshBuilder.CreateCylinder("bulletRight", { diameter: 0.6, height: 1.5 });
     bulletLeft.parent = blasterLeft;
     bulletRight.parent = bulletLeft;
     bulletRight.position.x = 1.5;
@@ -145,7 +146,7 @@ function createShip(scene, camera) {
     bulletMat.emissiveColor = currentColor;
     bulletLeft.material = bulletMat;
     bulletRight.material = bulletMat;
-    const bulletAnim = new BABYLON.Animation("bulletAnim", "position.y", 300, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+    const bulletAnim = new BABYLON.Animation("bulletAnim", "position.y", 60, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
     const bulletKeys = [];
 
     bulletKeys.push({
@@ -153,7 +154,7 @@ function createShip(scene, camera) {
         value: 0
     });
     bulletKeys.push({
-        frame: 600,
+        frame: 30,
         value: 600
     });
 
@@ -294,6 +295,8 @@ var createSkybox = (scene) => {
     return skybox;
 }
 
+var ship;
+
 function main() {
     const canvas = document.querySelector("#glCanvas");
     // Initialize the GL context
@@ -317,12 +320,17 @@ function main() {
         //const camera = new BABYLON.FreeCamera("FollowCam", new BABYLON.Vector3(0, 0, -15), scene);
         var camera = new BABYLON.ArcRotateCamera("Camera", 0, 0, 50, ship, scene);
         var ships = [];
-        var ship = createShip(scene, camera);
+        ship = createShip(scene, camera);
         ship.position.z = Math.random() * 20 - 10;
-        for (let i = 0; i < 10; i++) {
-            var cloneShip = createShip(scene, camera);
-            ships.push(cloneShip);
-        }
+      //  for (let i = 0; i < 10; i++) {
+       //     var cloneShip = createShip(scene, camera);
+        //    ships.push(cloneShip);
+       // }
+
+        // GUI
+        var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+
+
 
         const skybox = createSkybox(scene);
 
@@ -367,7 +375,7 @@ function main() {
             }
 
             // orbit
-            var position = new BABYLON.Vector3(ship.Radius * Math.cos(0.5*i + 100), ship.Radius * Math.sin(0.5*i + 100), ship.position.z);
+            var position = new BABYLON.Vector3(ship.Radius * Math.cos(i + 100), ship.Radius * Math.sin(i + 100), ship.position.z);
 
             if (!bulletActive) {
                 ship.lookAt(position);
@@ -388,12 +396,13 @@ function main() {
             const bulletLeft = findMesh(ship, "bulletLeft");
             for (let j = 0; j < comets.length; j++) {
                 var cometC = comets[j];
-                if (cometC.intersectsMesh(bulletLeft)) {
+                if (cometC.intersectsMesh(bulletLeft) && !cometC.hitBullet) {
                     console.log("bullet hit");
+                    let totalCometsHit = Number.parseInt(document.getElementById("totalRocksStopped").innerHTML) + 1;
+                    document.getElementById("totalRocksStopped").innerHTML = totalCometsHit;
                     cometC.hitBullet = true;
                 }
                 if (cometC.position.length() < diameter / 2) {
-                    console.log("hit earth");
                     cometC.hitEarth = true;
                 }
                 if (cometC.hitEarth || cometC.hitBullet) {
@@ -404,7 +413,6 @@ function main() {
                 cometC.rotate(BABYLON.Axis.X, 0.1);
                 cometC.position = positionC;
             }
-           
             // ship.lookAt(camera.getFrontPosition(10));
             // ship.lookAt(sphere.position);
             i += 0.005;
@@ -432,4 +440,21 @@ function main() {
     
 }
 
-window.onload = main;
+var gameStart = false;
+document.getElementById("sendButton").addEventListener("click", function (event) {
+    if (!gameStart) {
+        main();
+        gameStart = true;
+        // share data real time
+        setInterval(function () {
+            //  if (!gameStart || !ship) return;
+
+            var user = document.getElementById("userInput").value;
+            var posToSend = { "X": ship.position.x, "Y": ship.position.y, "Z": ship.position.z };
+            var message = JSON.stringify(posToSend);
+            connection.invoke("SendMessage", user, message).catch(function (err) {
+                return console.error(err.toString());
+            });
+        }, 500);
+    }
+});

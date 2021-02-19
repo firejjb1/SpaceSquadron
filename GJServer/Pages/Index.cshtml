@@ -2,6 +2,16 @@
 <div class="container">
     <div class="row">&nbsp;</div>
     <div class="row">
+        <h3>Defend the earth from incoming space rocks!</h3>
+    </div>
+    <div class="row">
+        <h3>Controls</h3>
+    </div>
+    <div>
+        <p>Space: shoot bullet</p>
+        <p>Mouse: drag mouse to look around and aim</p>
+    </div>
+    <div class="row">
         <div class="col-2">Name</div>
         <div class="col-4"><input type="text" id="userInput" /></div>
     </div>
@@ -12,7 +22,7 @@
     <div class="row">&nbsp;</div>
     <div class="row">
         <div class="col-6">
-            <input type="button" id="sendButton" value="Send Message" />
+            <input type="button" id="sendButton" value="Start Game" />
         </div>
     </div>
 </div>
@@ -26,10 +36,16 @@
         <ul id="messagesList"></ul>
     </div>
 </div>
-
+<div class="row">
+    <p>Number of players: <span id="numPlayers">0</span></p>
+</div>
+<div class="row">
+    <p>Rocks stopped: <span id="totalRocksStopped">0</span></p>
+</div>
 <canvas id="glCanvas" width="640" height="480"></canvas>
 
 <script src="~/js/babylon/babylonjs/babylon.min.js"></script>
+<script src="~/js/babylon/babylonjs/babylon.gui.min.js"></script>
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
 <script src="~/js/chat.js"></script>
 <script src="~/js/game.js"></script>
