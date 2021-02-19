@@ -4,21 +4,24 @@ var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 window.connection = connection;
 //Disable send button until connection is established
 document.getElementById("sendButton").disabled = true;
-var numPlayers = 0;
+var numPlayers = 1;
 window.ships = {};
 connection.on("ReceiveMessage", function (user, message) {
     if (!window.ships[user]) {
         var msg = message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
         var encodedMsg = user + " joins the game! " + msg;
-        numPlayers++;
         //var encodedMsg = "A new player joined the game!"
         var li = document.createElement("li");
         li.textContent = encodedMsg;
         document.getElementById("messagesList").appendChild(li);
-        document.getElementById("numPlayers").innerHTML = numPlayers;
+        numPlayers = Object.keys(window.ships).length;
     }
+    
+    document.getElementById("numPlayers").innerHTML = numPlayers+1;
+    let messageObj = JSON.parse(message);
+    console.log(messageObj);
 
-    window.ships[user] = JSON.parse(message);
+    window.ships[user] = messageObj;
 });
 
 connection.start().then(function () {
