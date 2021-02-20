@@ -6,7 +6,15 @@ window.connection = connection;
 document.getElementById("sendButton").disabled = true;
 var numPlayers = 1;
 window.ships = {};
+window.comets = {};
 connection.on("ReceiveMessage", function (user, message) {
+    if (user == "comet") {
+        
+        var cometObj = JSON.parse(message);
+        console.log("new comet: " + cometObj.name);
+        window.comets[cometObj.name] = cometObj;
+        return;
+    }
     if (!window.ships[user]) {
         var msg = message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
         var encodedMsg = user + " joins the game! " + msg;
@@ -19,10 +27,13 @@ connection.on("ReceiveMessage", function (user, message) {
     
     document.getElementById("numPlayers").innerHTML = numPlayers+1;
     let messageObj = JSON.parse(message);
-    console.log(messageObj);
 
     window.ships[user] = messageObj;
 });
+
+connection.on("ReceiveComet", function (user, message) {
+    console.log(user, message);
+})
 
 connection.start().then(function () {
     document.getElementById("sendButton").disabled = false;
