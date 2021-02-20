@@ -2,7 +2,7 @@
 <div class="container">
     <div class="row">&nbsp;</div>
     <div class="row">
-        <h3>Defend the earth from incoming space attacks!</h3>
+        <h3>Defend the earth with others from incoming space attacks!</h3>
     </div>
     <div class="row">&nbsp;</div>
     <div class="row">
@@ -12,6 +12,7 @@
         <p><b>Space</b>: shoot bullet</p>
         <p><b>Mouse</b>: drag mouse to look around and aim</p>
         <p><b>X</b>: accelerate along the orbit</p>
+        <p><b>Z</b>: decelerate along the orbit</p>
     </div>
     <div class="row">
         <div class="col-2">Name</div>
@@ -47,7 +48,10 @@
 <div class="row">
     <p><b>Total attacks stopped</b>: <span id="totalRocksStopped">0</span></p>
 </div>
-<canvas id="glCanvas" width="640" height="480"></canvas>
+<div class="row">
+    <p><b>Attacks that hit Earth</b>: <span id="totalRocksEarth">0</span></p>
+</div>
+<canvas id="glCanvas" width="853" height="640"></canvas>
 
 <script src="~/js/babylon/babylonjs/babylon.min.js"></script>
 <script src="~/js/babylon/babylonjs/babylon.gui.min.js"></script>
