@@ -320,14 +320,13 @@ function main() {
         //const camera = new BABYLON.FreeCamera("FollowCam", new BABYLON.Vector3(0, 0, -15), scene);
         var camera = new BABYLON.ArcRotateCamera("Camera", 0, 0, 50, ship, scene);
         var ships = {};
+        var comets = {};
         if (!ship)
             ship = createShip(scene, camera);
         ship.position.z = Math.random() * 20 - 10;
 
         // GUI
         var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
-
-
 
         const skybox = createSkybox(scene);
 
@@ -345,7 +344,6 @@ function main() {
         var spawnInterval = 5;
         var lastSync = 0;
         var syncInterval = 0.3;
-        var comets = [];
         scene.registerBeforeRender(() => {
             if (deviceSourceManager.getDeviceSource(BABYLON.DeviceType.Keyboard)) {
                 if (deviceSourceManager.getDeviceSource(BABYLON.DeviceType.Keyboard).getInput(37) == 1) {
@@ -391,24 +389,31 @@ function main() {
 
                     } else {
                         shipC = ships[key];
-                        console.log(positionC);
+                        // console.log(positionC);
                         shipC.position.x = positionC.X;
                         shipC.position.y = positionC.Y;
                         shipC.position.z = positionC.Z;
                     }
-                   //console.log(shipC.position);
+                    //console.log(shipC.position);
                 }
                 lastSync = i;
             }
-
-          
 
             // spawn comet
             if (i - lastSpawn > spawnInterval) {
                 console.log("comet spawn: " + i);
                 var comet = createComet(scene, i);
-                comets.push(comet);
+               //  window.comets.push(comet);
                 lastSpawn = i;
+                var cometJSON = JSON.stringify({
+                    position: comet.position,
+                    user: user,
+                    hitBullet: false,
+                    hitEarth: false,
+                });
+                connection.invoke("SendMessage", "comet", cometJSON).catch(function (err) {
+                    return console.error(err.toString());
+                });
               
             }
 
@@ -434,30 +439,46 @@ function main() {
             } 
             */
             const bulletLeft = findMesh(ship, "bulletLeft");
-            for (let j = 0; j < comets.length; j++) {
-                var cometC = comets[j];
+            for (const key in window.comets) {
+                // if (window.comets[key].user == user) continue;
+                // console.log(key);
+
+                var cometC;
+                if (!comets[key]) {
+                    cometC = createComet(scene, i);
+                    comets[key] = cometC;
+                    var positionC = window.comets[key].position;
+                    cometC.position = new BABYLON.Vector3(positionC.x, positionC.y, position.z);
+                } else {
+                    cometC = comets[key];
+                    cometC.hitEarth = window.comets[key].hitEarth;
+                    cometC.hitBullet = window.comets[key].hitBullet;
+                }
+                    
                 if (cometC.intersectsMesh(bulletLeft) && !cometC.hitBullet) {
                     console.log("bullet hit");
+
                     let totalCometsHit = Number.parseInt(document.getElementById("totalRocksStopped").innerHTML) + 1;
                     document.getElementById("totalRocksStopped").innerHTML = totalCometsHit;
                     cometC.hitBullet = true;
-                    connection.invoke("SendMessage", user, JSON.stringify(cometC.position)).catch(function (err) {
-                        return console.error(err.toString());
-                    });
                 }
                 if (cometC.position.length() < diameter / 2) {
+                    console.log(cometC.position.length());   
+
                     cometC.hitEarth = true;
                 }
                 if (cometC.hitEarth || cometC.hitBullet) {
+                   
                     cometC.material.emissiveColor = new BABYLON.Color3(1, 0, 0);
                     continue;
                 } 
+    
+                   console.log(1)
                 var positionC = new BABYLON.Vector3(cometC.position.x - 0.0001 * i * cometC.position.x, cometC.position.y - 0.0001 * i * cometC.position.y, cometC.position.z - 0.0001 * i * cometC.position.z);
                 cometC.rotate(BABYLON.Axis.X, 0.1);
                 cometC.position = positionC;
             }
-            // ship.lookAt(camera.getFrontPosition(10));
-            // ship.lookAt(sphere.position);
+
             i += 0.005;
         });
         

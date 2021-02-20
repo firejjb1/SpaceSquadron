@@ -2,6 +2,7 @@
 var currentColor = new BABYLON.Color3(0.5, 0.5, 1);
 var bulletActive = false;
 var Radius = 200;
+var user;
 
 // Find child mesh inside of ship
 var findMesh = (ship, childName) => {
@@ -135,8 +136,8 @@ function createShip(scene, camera) {
     blasterRight.parent = nose;
     blasterRight.material = blasterMat;
 
-    const bulletLeft = BABYLON.MeshBuilder.CreateCylinder("bulletLeft", { diameter: 0.3, height: 1.5 });
-    const bulletRight = BABYLON.MeshBuilder.CreateCylinder("bulletRight", { diameter: 0.3, height: 1.5 });
+    const bulletLeft = BABYLON.MeshBuilder.CreateCylinder("bulletLeft", { diameter: 0.6, height: 1.5 });
+    const bulletRight = BABYLON.MeshBuilder.CreateCylinder("bulletRight", { diameter: 0.6, height: 1.5 });
     bulletLeft.parent = blasterLeft;
     bulletRight.parent = bulletLeft;
     bulletRight.position.x = 1.5;
@@ -145,7 +146,7 @@ function createShip(scene, camera) {
     bulletMat.emissiveColor = currentColor;
     bulletLeft.material = bulletMat;
     bulletRight.material = bulletMat;
-    const bulletAnim = new BABYLON.Animation("bulletAnim", "position.y", 300, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+    const bulletAnim = new BABYLON.Animation("bulletAnim", "position.y", 60, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
     const bulletKeys = [];
 
     bulletKeys.push({
@@ -153,7 +154,7 @@ function createShip(scene, camera) {
         value: 0
     });
     bulletKeys.push({
-        frame: 600,
+        frame: 30,
         value: 600
     });
 
@@ -294,6 +295,8 @@ var createSkybox = (scene) => {
     return skybox;
 }
 
+var ship;
+
 function main() {
     const canvas = document.querySelector("#glCanvas");
     // Initialize the GL context
@@ -304,7 +307,7 @@ function main() {
         // Create a basic BJS Scene object
         var scene = new BABYLON.Scene(engine);
         var gl = new BABYLON.GlowLayer("glow", scene);
-
+        
         // device manager
         var deviceSourceManager = new BABYLON.DeviceSourceManager(scene.getEngine());
         deviceSourceManager.onDeviceConnectedObservable.add((device) => {
@@ -316,13 +319,15 @@ function main() {
 
         //const camera = new BABYLON.FreeCamera("FollowCam", new BABYLON.Vector3(0, 0, -15), scene);
         var camera = new BABYLON.ArcRotateCamera("Camera", 0, 0, 50, ship, scene);
-        var ships = [];
-        var ship = createShip(scene, camera);
+        var ships = {};
+        if (!ship)
+            ship = createShip(scene, camera);
         ship.position.z = Math.random() * 20 - 10;
-        for (let i = 0; i < 10; i++) {
-            var cloneShip = createShip(scene, camera);
-            ships.push(cloneShip);
-        }
+
+        // GUI
+        var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+
+
 
         const skybox = createSkybox(scene);
 
@@ -337,7 +342,9 @@ function main() {
         sphere.rotate(BABYLON.Axis.X, Math.PI);
         var i = 0;
         var lastSpawn = 0;
-        var spawnInterval = 3;
+        var spawnInterval = 5;
+        var lastSync = 0;
+        var syncInterval = 0.3;
         var comets = [];
         scene.registerBeforeRender(() => {
             if (deviceSourceManager.getDeviceSource(BABYLON.DeviceType.Keyboard)) {
@@ -359,15 +366,54 @@ function main() {
                     fireBlasters(scene, ship, camera);
                 }
             }
+
+            // sync with other ships
+            if (i - lastSync > syncInterval) {
+                user = document.getElementById("userInput").value;
+                var posToSend = {};
+                posToSend.X = ship.position.x;
+                posToSend.Y = ship.position.y;
+                posToSend.Z = ship.position.z;
+
+                var message = JSON.stringify(posToSend);
+                // console.log(message)
+                connection.invoke("SendMessage", user, message).catch(function (err) {
+                    return console.error(err.toString());
+                });
+                for (const key in window.ships) {
+                    if (key.toString() == user) continue;
+                    var shipC;
+                    var positionC = window.ships[key];
+                    if (!ships[key]) {
+                        // create ship
+                        shipC = createShip(scene, camera);
+                        ships[key] = shipC;
+
+                    } else {
+                        shipC = ships[key];
+                        console.log(positionC);
+                        shipC.position.x = positionC.X;
+                        shipC.position.y = positionC.Y;
+                        shipC.position.z = positionC.Z;
+                    }
+                   //console.log(shipC.position);
+                }
+                lastSync = i;
+            }
+
+          
+
+            // spawn comet
             if (i - lastSpawn > spawnInterval) {
                 console.log("comet spawn: " + i);
                 var comet = createComet(scene, i);
                 comets.push(comet);
                 lastSpawn = i;
+              
             }
 
             // orbit
-            var position = new BABYLON.Vector3(ship.Radius * Math.cos(0.5*i + 100), ship.Radius * Math.sin(0.5*i + 100), ship.position.z);
+            var position = new BABYLON.Vector3(ship.Radius * Math.cos(i + 100), ship.Radius * Math.sin(i + 100), ship.position.z);
 
             if (!bulletActive) {
                 ship.lookAt(position);
@@ -375,25 +421,31 @@ function main() {
             }
 
             ship.position = position;
-          
-            for (let j = 0; j < ships.length; j++) {
-                var shipC = ships[j];
-                var positionC = new BABYLON.Vector3(shipC.Radius * Math.cos(i + j*20), shipC.Radius * Math.sin(i + j*20), j*20);
+           // render other ships client side to avoid jankiness
+            /**
+           for (const key in ships) {
+                var shipC = ships[key];
+                var positionC = new BABYLON.Vector3(shipC.position.x + 0.005, shipC.position.y + 0.005, shipC.position.z);
 
                 shipC.lookAt(positionC);
                 shipC.rotate(BABYLON.Axis.X, Math.PI / 2);
 
                 shipC.position = positionC;
-            }
+            } 
+            */
             const bulletLeft = findMesh(ship, "bulletLeft");
             for (let j = 0; j < comets.length; j++) {
                 var cometC = comets[j];
-                if (cometC.intersectsMesh(bulletLeft)) {
+                if (cometC.intersectsMesh(bulletLeft) && !cometC.hitBullet) {
                     console.log("bullet hit");
+                    let totalCometsHit = Number.parseInt(document.getElementById("totalRocksStopped").innerHTML) + 1;
+                    document.getElementById("totalRocksStopped").innerHTML = totalCometsHit;
                     cometC.hitBullet = true;
+                    connection.invoke("SendMessage", user, JSON.stringify(cometC.position)).catch(function (err) {
+                        return console.error(err.toString());
+                    });
                 }
                 if (cometC.position.length() < diameter / 2) {
-                    console.log("hit earth");
                     cometC.hitEarth = true;
                 }
                 if (cometC.hitEarth || cometC.hitBullet) {
@@ -404,7 +456,6 @@ function main() {
                 cometC.rotate(BABYLON.Axis.X, 0.1);
                 cometC.position = positionC;
             }
-           
             // ship.lookAt(camera.getFrontPosition(10));
             // ship.lookAt(sphere.position);
             i += 0.005;
@@ -427,9 +478,24 @@ function main() {
     window.addEventListener('resize', function () {
         engine.resize();
     });
-
-
-    
 }
 
-window.onload = main;
+var gameStart = false;
+document.getElementById("sendButton").addEventListener("click", function (event) {
+    if (!gameStart) {
+        main();
+        gameStart = true;
+        // share data real time
+     /**   setInterval(function () {
+            user = document.getElementById("userInput").value;
+            var posToSend = { "X": ship.position.x, "Y": ship.position.y, "Z": ship.position.z };
+            
+            var message = JSON.stringify(posToSend);
+            // console.log(message)
+            connection.invoke("SendMessage", user, message).catch(function (err) {
+                return console.error(err.toString());
+            });
+        }, 500);
+        */
+    }
+});

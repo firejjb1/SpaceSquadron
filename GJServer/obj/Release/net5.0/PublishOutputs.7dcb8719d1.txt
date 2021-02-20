@@ -10,6 +10,7 @@ C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\w
 C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\wwwroot\img\Space\space_left.jpg
 C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\wwwroot\img\Space\space_right.jpg
 C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\wwwroot\img\Space\space_up.jpg
+C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\wwwroot\js\babylon\babylonjs\babylon.gui.min.js
 C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\wwwroot\js\babylon\babylonjs\babylon.js
 C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\wwwroot\js\babylon\babylonjs\babylon.max.js
 C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\wwwroot\js\babylon\babylonjs\babylon.max.js.map
