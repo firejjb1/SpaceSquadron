@@ -344,6 +344,7 @@ function main() {
         var spawnInterval = 5;
         var lastSync = 0;
         var syncInterval = 0.3;
+        var selfCometHit = 0;
         scene.registerBeforeRender(() => {
             if (deviceSourceManager.getDeviceSource(BABYLON.DeviceType.Keyboard)) {
                 if (deviceSourceManager.getDeviceSource(BABYLON.DeviceType.Keyboard).getInput(37) == 1) {
@@ -401,20 +402,22 @@ function main() {
 
             // spawn comet
             if (i - lastSpawn > spawnInterval) {
-                console.log("comet spawn: " + i);
+               
                 var comet = createComet(scene, i);
                //  window.comets.push(comet);
                 lastSpawn = i;
-                var cometJSON = JSON.stringify({
+                var cometJSON = {
                     position: comet.position,
-                    user: user,
+                    name: (user+i).toString(),
                     hitBullet: false,
                     hitEarth: false,
-                });
-                connection.invoke("SendMessage", "comet", cometJSON).catch(function (err) {
+                };
+                console.log("comet spawn: " + name);
+                comets[cometJSON.name] = comet;
+                window.comets[cometJSON.name] = comet;
+                connection.invoke("SendMessage", "comet", JSON.stringify(cometJSON)).catch(function (err) {
                     return console.error(err.toString());
                 });
-              
             }
 
             // orbit
@@ -439,46 +442,60 @@ function main() {
             } 
             */
             const bulletLeft = findMesh(ship, "bulletLeft");
+            var totalCometsHit = 0;
+   
             for (const key in window.comets) {
                 // if (window.comets[key].user == user) continue;
                 // console.log(key);
 
                 var cometC;
                 if (!comets[key]) {
+                    console.log(key, comets);
                     cometC = createComet(scene, i);
                     comets[key] = cometC;
                     var positionC = window.comets[key].position;
-                    cometC.position = new BABYLON.Vector3(positionC.x, positionC.y, position.z);
+                    cometC.position = new BABYLON.Vector3(positionC._x, positionC._y, position._z);
+                   
                 } else {
                     cometC = comets[key];
-                    cometC.hitEarth = window.comets[key].hitEarth;
-                    cometC.hitBullet = window.comets[key].hitBullet;
+                    cometC.hitEarth = cometC.hitEarth || window.comets[key].hitEarth;
+                    cometC.hitBullet = cometC.hitBullet || window.comets[key].hitBullet;
                 }
-                    
                 if (cometC.intersectsMesh(bulletLeft) && !cometC.hitBullet) {
+                    selfCometHit++;
                     console.log("bullet hit");
-
-                    let totalCometsHit = Number.parseInt(document.getElementById("totalRocksStopped").innerHTML) + 1;
-                    document.getElementById("totalRocksStopped").innerHTML = totalCometsHit;
                     cometC.hitBullet = true;
+                    // sync bullet hit
+                    var cometJSON = {
+                        position: cometC.position,
+                        name: window.comets[key].name,
+                        hitBullet: true,
+                        hitEarth: false,
+                    };
+
+                    connection.invoke("SendMessage", "comet", JSON.stringify(cometJSON)).catch(function (err) {
+                        return console.error(err.toString());
+                    });
                 }
                 if (cometC.position.length() < diameter / 2) {
-                    console.log(cometC.position.length());   
-
+                    console.log("hit earth")
                     cometC.hitEarth = true;
                 }
+                if (cometC.hitBullet && !cometC.hitEarth)
+                    totalCometsHit++;
                 if (cometC.hitEarth || cometC.hitBullet) {
                    
                     cometC.material.emissiveColor = new BABYLON.Color3(1, 0, 0);
                     continue;
                 } 
-    
-                   console.log(1)
+               
+
                 var positionC = new BABYLON.Vector3(cometC.position.x - 0.0001 * i * cometC.position.x, cometC.position.y - 0.0001 * i * cometC.position.y, cometC.position.z - 0.0001 * i * cometC.position.z);
                 cometC.rotate(BABYLON.Axis.X, 0.1);
                 cometC.position = positionC;
             }
-
+            document.getElementById("totalRocksStopped").innerHTML = totalCometsHit;
+            document.getElementById("selfRocksStopped").innerHTML = selfCometHit;
             i += 0.005;
         });
         

@@ -9,10 +9,10 @@ window.ships = {};
 window.comets = {};
 connection.on("ReceiveMessage", function (user, message) {
     if (user == "comet") {
-       
-        var cometobj = JSON.parse(message);
-        window.comets[cometobj.user + Object.keys(window.comets).length] = cometobj;
-        // console.log(window.comets);
+        
+        var cometObj = JSON.parse(message);
+        console.log("new comet: " + cometObj.name);
+        window.comets[cometObj.name] = cometObj;
         return;
     }
     if (!window.ships[user]) {
