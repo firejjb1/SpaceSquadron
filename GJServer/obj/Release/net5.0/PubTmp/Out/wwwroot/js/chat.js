@@ -31,9 +31,6 @@ connection.on("ReceiveMessage", function (user, message) {
     window.ships[user] = messageObj;
 });
 
-connection.on("ReceiveComet", function (user, message) {
-    console.log(user, message);
-})
 
 connection.start().then(function () {
     document.getElementById("sendButton").disabled = false;

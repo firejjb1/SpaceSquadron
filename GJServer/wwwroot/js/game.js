@@ -222,9 +222,10 @@ function createShip(scene, camera) {
 }
 
 // Activate blaster animation
-var fireBlasters = (scene, ship, camera) => {
+var fireBlasters = (scene, ship, camera, sound) => {
     if (!bulletActive) {
         bulletActive = true;
+        sound.play();
         const bulletLeft = findMesh(ship, "bulletLeft");
         ship.lookAt(camera.getFrontPosition(10));
         ship.rotate(BABYLON.Axis.X, -Math.PI / 2.2);
@@ -297,15 +298,34 @@ var createSkybox = (scene) => {
 
 var ship;
 
+function initializeSounds(scene) {
+    const shootSound = new BABYLON.Sound("shootSound", "sfx/Retro Gun Laser SingleShot 01.wav", scene, null, { loop: false, autoplay: false });
+    const impactSound = new BABYLON.Sound("impactSound", "sfx/Retro Explosion Long 02.wav", scene, null, { loop: false, autoplay: false });
+    const accelSound = new BABYLON.Sound("accelSound", "sfx/Retro Charge 13.wav", scene, null, { loop: false, autoplay: false });
+    const decelSound = new BABYLON.Sound("decelSound", "sfx/Retro Charge Off StereoUP 02.wav", scene, null, { loop: false, autoplay: false });
+    const hitSound = new BABYLON.Sound("hit Sound", "sfx/Retro Magic 06.wav", scene, null, { loop: false, autoplay: false });
+
+    return {
+        shootSound,
+        impactSound,
+        accelSound,
+        decelSound,
+        hitSound,
+    };
+}
+
 function main() {
     const canvas = document.querySelector("#glCanvas");
     // Initialize the GL context
     var engine = new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true });
+    
     // CreateScene function that creates and return the scene
     var createScene = function () {
 
         // Create a basic BJS Scene object
         var scene = new BABYLON.Scene(engine);
+
+        var soundObj = initializeSounds(scene);
         var gl = new BABYLON.GlowLayer("glow", scene);
         
         // device manager
@@ -348,6 +368,8 @@ function main() {
         var totalCometsEarth = 0;
         var accel = 1;
         var shipMotion = 0;
+        var isAccel = false;
+        var isDecel = false;
         scene.registerBeforeRender(() => {
             if (deviceSourceManager.getDeviceSource(BABYLON.DeviceType.Keyboard)) {
                 if (deviceSourceManager.getDeviceSource(BABYLON.DeviceType.Keyboard).getInput(37) == 1) {
@@ -365,18 +387,30 @@ function main() {
                 }
                 // X = accelerate
                 if (deviceSourceManager.getDeviceSource(BABYLON.DeviceType.Keyboard).getInput(88) == 1) {
+                    if (!isAccel) {
+                        soundObj.accelSound.play();
+                        isAccel = true;
+                    }
                     if (accel < 3)
                         accel += 0.1;
+                    
                 } else if (deviceSourceManager.getDeviceSource(BABYLON.DeviceType.Keyboard).getInput(90) == 1) {
+                    if (!isDecel) {
+                        soundObj.decelSound.play();
+                        isDecel = true;
+                    }
                     if (accel > 0.2) {
                         accel -= 0.1;
                     }
                 } else {
-                    accel = 1;
+                    // accel = 1;
+                    isAccel = false;
+                    isDecel = false;
+                    soundObj.accelSound.stop();
                 }
 
                 if (deviceSourceManager.getDeviceSource(BABYLON.DeviceType.Keyboard).getInput(32) == 1) {
-                    fireBlasters(scene, ship, camera);
+                    fireBlasters(scene, ship, camera, soundObj.shootSound);
                 }
             }
 
@@ -499,6 +533,7 @@ function main() {
                         hitBullet: true,
                         hitEarth: false,
                     };
+                    soundObj.hitSound.play();
 
                     connection.invoke("SendMessage", "comet", JSON.stringify(cometJSON)).catch(function (err) {
                         return console.error(err.toString());
@@ -508,6 +543,7 @@ function main() {
                     console.log("hit earth")
                     cometC.hitEarth = true;
                     totalCometsEarth++;
+                    soundObj.impactSound.play();
                 }
                 if (cometC.hitBullet && !cometC.hitEarth)
                     totalCometsHit++;
