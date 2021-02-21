@@ -13,3 +13,8 @@ Babylon.js
 
 ### Backend
 .NET and SignalR
+
+### Assets Used
+https://kronbits.itch.io/freesfx
+http://planetpixelemporium.com/earth8081.html
+
