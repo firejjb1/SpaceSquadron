@@ -324,7 +324,7 @@ function main() {
 
         // Create a basic BJS Scene object
         var scene = new BABYLON.Scene(engine);
-
+        const sound = new BABYLON.Sound("bgm", "sfx/spacesquadron.wav", scene, null, { loop: true, autoplay: true });
         var soundObj = initializeSounds(scene);
         var gl = new BABYLON.GlowLayer("glow", scene);
         

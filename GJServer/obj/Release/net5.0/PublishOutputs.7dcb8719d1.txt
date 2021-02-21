@@ -55,6 +55,12 @@ C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\w
 C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\wwwroot\lib\jquery\dist\jquery.min.js
 C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\wwwroot\lib\jquery\dist\jquery.min.map
 C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\wwwroot\lib\jquery\LICENSE.txt
+C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\wwwroot\sfx\Retro Charge 13.wav
+C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\wwwroot\sfx\Retro Charge Off StereoUP 02.wav
+C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\wwwroot\sfx\Retro Explosion Long 02.wav
+C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\wwwroot\sfx\Retro Gun Laser SingleShot 01.wav
+C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\wwwroot\sfx\Retro Impact 20.wav
+C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\wwwroot\sfx\Retro Magic 06.wav
 C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\appsettings.Development.json
 C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\appsettings.json
 C:\Users\Jian\Documents\github\GJServer\GJServer\obj\Release\net5.0\PubTmp\Out\libman.json
