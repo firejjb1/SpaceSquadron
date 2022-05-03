@@ -1,11 +1,10 @@
 # SpaceSquadron
 
 
-Orbit the Earth like satellites. Shoot incoming objects. Multiplayer supported.
+Orbit the Earth. Shoot incoming comets. Multiplayer supported.
 
-
-Play here:
-https://gjserver20210214203021.azurewebsites.net/
+### Run locally
+Clone project and import in Visual Studio. .Net Core 5 required.
 
 ### Game engine
 Babylon.js
